@@ -35,11 +35,17 @@ jobs:
       run: |
         echo "$PACKAGE_FEED" >> openwrt/feeds.conf.local
 
-    - name: Invoke CI build
+    - name: Checkout upstream OpenWrt CI scripts
+      uses: actions/checkout@v4
+      with:
+        repository: openwrt/build-scripts
+        path: openwrt-ci
+
+    - name: Compile fancontrol (using upstream CI helper)
       working-directory: build-scripts
       run: |
-        ./scripts/ci/compile_feed_packages.sh \
-          --openwrt-dir ../openwrt \
+        ./openwrt-ci/scripts/ci/compile_feed_packages.sh \
+          --openwrt-dir ./openwrt \
           --target $TARGET \
           --package-list $PACKAGE_LIST \
           --jobs $(nproc)
