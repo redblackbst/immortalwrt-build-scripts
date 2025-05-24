@@ -3,6 +3,7 @@ name: Build fancontrol IPKs
 on:
   push:
     branches:
+      - mvebu/cortexa72
       - main
   workflow_dispatch:
 
