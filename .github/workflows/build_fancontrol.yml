@@ -34,8 +34,12 @@ jobs:
       run: |
         cd openwrt
 
-        cp feeds.conf.default feeds.conf.local
-        echo "src-git fancontrol https://github.com/JiaY-shi/fancontrol.git" >> feeds.conf.local
+        cp feeds.conf.default feeds.conf
+        echo "src-git fancontrol https://github.com/JiaY-shi/fancontrol.git" >> feeds.conf
+
+        # debug
+        echo "--- now feeds.conf contains ---"
+        cat feeds.conf
 
         ./scripts/feeds update -a
         ./scripts/feeds install -a
