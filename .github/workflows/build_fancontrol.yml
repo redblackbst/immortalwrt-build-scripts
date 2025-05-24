@@ -12,7 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       IMMORTAL_TAG: v24.10.1
-      PACKAGE_FEED: "src-git fancontrol https://github.com/JiaY-shi/fancontrol.git"
       TARGET: mvebu/cortexa72
       DUALBUILDBOT: false
       PACKAGE_LIST: fancontrol,luci-app-fancontrol
@@ -36,7 +35,7 @@ jobs:
         cd openwrt
 
         cp feeds.conf.default feeds.conf.local
-        echo "$PACKAGE_FEED" >> feeds.conf.local
+        echo "src-git fancontrol https://github.com/JiaY-shi/fancontrol.git" >> feeds.conf.local
 
         ./scripts/feeds update -a
         ./scripts/feeds install -a
