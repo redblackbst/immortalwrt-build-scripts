@@ -35,20 +35,21 @@ jobs:
       run: |
         echo "$PACKAGE_FEED" >> openwrt/feeds.conf.local
 
-    - name: Checkout upstream OpenWrt CI scripts
-      uses: actions/checkout@v4
-      with:
-        repository: openwrt/build-scripts
-        path: openwrt-ci
-
-    - name: Compile fancontrol (using upstream CI helper)
-      working-directory: build-scripts
+    - name: Compile fancontrol & LuCI
       run: |
-        ./openwrt-ci/scripts/ci/compile_feed_packages.sh \
-          --openwrt-dir ./openwrt \
-          --target $TARGET \
-          --package-list $PACKAGE_LIST \
-          --jobs $(nproc)
+        cd openwrt
+        # 1) Pull in ALL feeds (including your custom one in feeds.conf.local)
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
+
+        # 2) Ensure your packages are selected (optional if you did menuconfig)
+        # echo "CONFIG_PACKAGE_fancontrol=y" >> .config
+        # echo "CONFIG_PACKAGE_luci-app-fancontrol=y" >> .config
+        # make defconfig
+
+        # 3) Build just the two packages
+        make package/fancontrol/{clean,compile} V=s
+        make package/luci-app-fancontrol/{clean,compile} V=s
 
     - name: Upload IPKs
       uses: actions/upload-artifact@v4
