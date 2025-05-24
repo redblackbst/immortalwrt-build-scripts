@@ -27,8 +27,12 @@ jobs:
           openwrt/staging_dir/toolchain-*
           openwrt/dl
         key: ${{ runner.os }}-immortalwrt-${{ env.IMMORTAL_TAG }}
-        restore-keys: |
-          ${{ runner.os }}-immortalwrt-
+
+    - name: Build host tools (once per cache miss)
+      run: |
+        cd openwrt
+        make -j$(nproc) tools/install
+        make -j$(nproc) toolchain/install
 
     - name: Compile fancontrol & LuCI
       run: |
