@@ -31,15 +31,11 @@ jobs:
         git fetch --tags
         git checkout $IMMORTAL_TAG
 
-    - name: Inject fancontrol feed
-      run: |
-        echo "$PACKAGE_FEED" >> openwrt/feeds.conf.local
-
     - name: Compile fancontrol & LuCI
       run: |
         cd openwrt
-        ./scripts/feeds update -a
-        ./scripts/feeds install -a
+        echo "$PACKAGE_FEED" >> feeds.conf.local
+        ./scripts/feeds update fancontrol && ./scripts/feeds install -a -f -p fancontrol
 
         echo "CONFIG_PACKAGE_fancontrol=y"    >> .config
         echo "CONFIG_PACKAGE_luci-app-fancontrol=y" >> .config
