@@ -11,43 +11,40 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      IMMORTAL_TAG: v24.10.1
+      OPENWRT_RELEASE: 24.10.1
       TARGET: mvebu/cortexa72
-      DUALBUILDBOT: false
-      PACKAGE_LIST: fancontrol,luci-app-fancontrol
 
     steps:
-    - name: Checkout build-scripts
+    - name: Checkout repository
       uses: actions/checkout@v4
-      with:
-        repository: immortalwrt/build-scripts
-        path: build-scripts
 
-    - name: Fetch ImmortalWRT
+    - name: Download OpenWrt SDK
       run: |
-        git clone https://github.com/immortalwrt/immortalwrt.git openwrt
-        cd openwrt
-        git fetch --tags
-        git checkout $IMMORTAL_TAG
+        ARCH="${{ env.TARGET%%/* }}"
+        SUBTARGET="${{ env.TARGET#*/ }}"
+        SDK_URL="https://downloads.openwrt.org/releases/${{ env.OPENWRT_RELEASE }}/targets/${ARCH}/${SUBTARGET}/openwrt-sdk-${{ env.OPENWRT_RELEASE }}-${ARCH}-${SUBTARGET}_gcc-13.3.0_musl.Linux-x86_64.tar.xz"
+        wget -qO sdk.tar.xz "$SDK_URL"
+        tar -xJf sdk.tar.xz
+        mv openwrt-sdk-* openwrt-sdk
 
-    - name: Compile fancontrol & LuCI
+    - name: Inject fancontrol feed
       run: |
-        cd openwrt
-
+        cd openwrt-sdk
         cp feeds.conf.default feeds.conf
         echo "src-git fancontrol https://github.com/JiaY-shi/fancontrol.git" >> feeds.conf
 
-        # debug
-        echo "--- now feeds.conf contains ---"
-        cat feeds.conf
-
+    - name: Update feeds & select packages
+      run: |
+        cd openwrt-sdk
         ./scripts/feeds update -a
         ./scripts/feeds install -a
-
-        echo "CONFIG_PACKAGE_fancontrol=y"    >> .config
+        echo "CONFIG_PACKAGE_fancontrol=y"         >> .config
         echo "CONFIG_PACKAGE_luci-app-fancontrol=y" >> .config
         make defconfig
 
+    - name: Compile fancontrol & LuCI
+      run: |
+        cd openwrt-sdk
         make package/fancontrol/compile V=s
         make package/luci-app-fancontrol/compile V=s
 
