@@ -39,7 +39,8 @@ jobs:
     - name: Non-interactive config
       run: |
         cd openwrt
-        echo "CONFIG_TARGET_${TARGET//\//_}=y"        >> .config
+        echo "CONFIG_TARGET_mvebu=y"            >> .config
+        echo "CONFIG_TARGET_mvebu_cortexa72=y"  >> .config
         echo "CONFIG_PACKAGE_fancontrol=y"           >> .config
         echo "CONFIG_PACKAGE_luci-app-fancontrol=y"  >> .config
         make defconfig
@@ -47,8 +48,7 @@ jobs:
     - name: Build host tools, toolchain & prepare kernel
       run: |
         cd openwrt
-        make -j$(nproc) tools/install
-        make -j$(nproc) toolchain/install
+        make -j$(nproc) tools/install toolchain/install
         make -j$(nproc) target/linux/prepare
 
     - name: Compile fancontrol & LuCI
