@@ -1,0 +1,52 @@
+name: Build fancontrol IPKs
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      IMMORTAL_TAG: v24.10.1
+      PACKAGE_FEED: "src-git fancontrol https://github.com/JiaY-shi/fancontrol.git"
+      TARGET: mvebu/cortexa72
+      DUALBUILDBOT: false
+      PACKAGE_LIST: fancontrol,luci-app-fancontrol
+
+    steps:
+    - name: Checkout build-scripts
+      uses: actions/checkout@v4
+      with:
+        repository: immortalwrt/build-scripts
+        path: build-scripts
+
+    - name: Fetch ImmortalWRT
+      run: |
+        git clone https://github.com/immortalwrt/immortalwrt.git openwrt
+        cd openwrt
+        git fetch --tags
+        git checkout $IMMORTAL_TAG
+
+    - name: Inject fancontrol feed
+      run: |
+        echo "$PACKAGE_FEED" >> openwrt/feeds.conf.local
+
+    - name: Invoke CI build
+      working-directory: build-scripts
+      run: |
+        ./scripts/ci/compile_feed_packages.sh \
+          --openwrt-dir ../openwrt \
+          --target $TARGET \
+          --package-list $PACKAGE_LIST \
+          --jobs $(nproc)
+
+    - name: Upload IPKs
+      uses: actions/upload-artifact@v3
+      with:
+        name: fancontrol-packages
+        path: |
+          openwrt/bin/packages/**/fancontrol_*.ipk
+          openwrt/bin/packages/**/luci-app-fancontrol_*.ipk
