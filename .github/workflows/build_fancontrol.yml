@@ -45,8 +45,8 @@ jobs:
         echo "CONFIG_PACKAGE_luci-app-fancontrol=y" >> .config
         make defconfig
 
-        make package/fancontrol/{clean,compile} V=s
-        make package/luci-app-fancontrol/{clean,compile} V=s
+        make package/fancontrol/compile V=s
+        make package/luci-app-fancontrol/compile V=s
 
     - name: Upload IPKs
       uses: actions/upload-artifact@v4
