@@ -19,7 +19,7 @@ jobs:
         path: openwrt
         fetch-depth: 0
 
-    - name: Cache host & toolchain
+    - name: Cache host, toolchain & dl
       uses: actions/cache@v3
       with:
         path: |
@@ -44,11 +44,12 @@ jobs:
         echo "CONFIG_PACKAGE_luci-app-fancontrol=y"  >> .config
         make defconfig
 
-    - name: Build host tools (once per cache miss)
+    - name: Build host tools, toolchain & prepare kernel
       run: |
         cd openwrt
         make -j$(nproc) tools/install
         make -j$(nproc) toolchain/install
+        make -j$(nproc) target/linux/prepare
 
     - name: Compile fancontrol & LuCI
       run: |
