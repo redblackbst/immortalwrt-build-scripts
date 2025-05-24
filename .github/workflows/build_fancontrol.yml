@@ -19,17 +19,15 @@ jobs:
         path: openwrt
         fetch-depth: 0
 
-    - name: Cache build artifacts
+    - name: Cache host & toolchain
       uses: actions/cache@v3
       with:
-        # Cache both the host tools and the cross-toolchain
         path: |
           openwrt/staging_dir/host
           openwrt/staging_dir/toolchain-*
           openwrt/dl
         key: ${{ runner.os }}-immortalwrt-${{ env.IMMORTAL_TAG }}
         restore-keys: |
-          ${{ runner.os }}-immortalwrt-${{ env.IMMORTAL_TAG }}
           ${{ runner.os }}-immortalwrt-
 
     - name: Compile fancontrol & LuCI
