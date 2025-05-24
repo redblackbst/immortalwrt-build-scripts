@@ -18,11 +18,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+
     - name: Download OpenWrt SDK
       run: |
-        ARCH="${{ env.TARGET%%/* }}"
-        SUBTARGET="${{ env.TARGET#*/ }}"
-        SDK_URL="https://downloads.openwrt.org/releases/${{ env.OPENWRT_RELEASE }}/targets/${ARCH}/${SUBTARGET}/openwrt-sdk-${{ env.OPENWRT_RELEASE }}-${ARCH}-${SUBTARGET}_gcc-13.3.0_musl.Linux-x86_64.tar.xz"
+        # split TARGET into ARCH and SUBTARGET
+        ARCH="${TARGET%%/*}"
+        SUBTARGET="${TARGET#*/}"
+        SDK_URL="https://downloads.openwrt.org/releases/${OPENWRT_RELEASE}/targets/${ARCH}/${SUBTARGET}/openwrt-sdk-${OPENWRT_RELEASE}-${ARCH}-${SUBTARGET}_gcc-13.3.0_musl.Linux-x86_64.tar.xz"
         wget -qO sdk.tar.xz "$SDK_URL"
         tar -xJf sdk.tar.xz
         mv openwrt-sdk-* openwrt-sdk
