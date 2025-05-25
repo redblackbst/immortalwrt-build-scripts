@@ -48,7 +48,7 @@ jobs:
     - name: Build host tools, toolchain & prepare kernel
       run: |
         cd openwrt
-        make -j$(nproc) {tools,toolchain,target}/install
+        make -j$(nproc) {toolchain,target}/compile
 
     - name: Compile fancontrol & LuCI
       run: |
