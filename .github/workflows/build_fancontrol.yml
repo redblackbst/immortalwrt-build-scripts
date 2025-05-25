@@ -28,23 +28,20 @@ jobs:
           openwrt/dl
         key: ${{ runner.os }}-immortalwrt-${{ env.IMMORTAL_TAG }}
 
-    - name: Prepare feeds
+    - name: Prepare feeds & config
       run: |
         cd openwrt
         cp feeds.conf.default feeds.conf
         echo "src-git fancontrol https://github.com/JiaY-shi/fancontrol.git" >> feeds.conf
         ./scripts/feeds update -a
         ./scripts/feeds install -a
-
-    - name: Non-interactive config
-      run: |
-        cd openwrt
+  
         echo "CONFIG_TARGET_${TARGET//\//_}=y"       >> .config
         echo "CONFIG_PACKAGE_fancontrol=y"           >> .config
         echo "CONFIG_PACKAGE_luci-app-fancontrol=y"  >> .config
         make defconfig
 
-    - name: Build host tools, toolchain & prepare kernel
+    - name: Bootstrap toolchain & kernel
       run: |
         cd openwrt
         make -j$(nproc) {toolchain,target}/compile
@@ -52,17 +49,10 @@ jobs:
     - name: Compile fancontrol & LuCI
       run: |
         cd openwrt
-        make package/fancontrol/compile V=s
-        make package/luci-app-fancontrol/compile V=s
-
-    - name: Show built packages
-      run: |
-        ls -R openwrt/bin
+        make -j$(nproc) package/{fancontrol,luci-app-fancontrol}/compile V=s
 
     - name: Upload IPKs
       uses: actions/upload-artifact@v4
       with:
         name: fancontrol-packages
-        path: |
-          openwrt/bin/packages/**/fancontrol_*.ipk
-          openwrt/bin/packages/**/luci-app-fancontrol_*.ipk
+        path: openwrt/bin/packages/**/fancontrol/*.ipk
