@@ -35,8 +35,10 @@ jobs:
         echo "src-git fancontrol https://github.com/JiaY-shi/fancontrol.git" >> feeds.conf
         ./scripts/feeds update -a
         ./scripts/feeds install -a
+        echo "CONFIG_TARGET_mvebu=y"               >> .config
+        echo "CONFIG_TARGET_mvebu_cortexa72=y"     >> .config
+        echo "CONFIG_TARGET_ARCH_PACKAGES=aarch64_cortex-a72" >> .config
         echo "CONFIG_USE_APK=n"                      >> .config
-        echo "CONFIG_TARGET_${TARGET//\//_}=y"       >> .config
         echo "CONFIG_PACKAGE_fancontrol=y"           >> .config
         echo "CONFIG_PACKAGE_luci-app-fancontrol=y"  >> .config
         make defconfig
