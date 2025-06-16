@@ -41,6 +41,7 @@ jobs:
         echo "CONFIG_USE_APK=n"                      >> .config
         echo "CONFIG_PACKAGE_fancontrol=y"           >> .config
         echo "CONFIG_PACKAGE_luci-app-fancontrol=y"  >> .config
+        echo "CONFIG_PACKAGE_luci-i18n-fancontrol-zh_Hans=y" >> .config
         make defconfig
 
     - name: Bootstrap toolchain & kernel
