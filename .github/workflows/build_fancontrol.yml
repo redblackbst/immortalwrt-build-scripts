@@ -52,7 +52,7 @@ jobs:
     - name: Compile fancontrol & LuCI
       run: |
         cd openwrt
-        make -j$(nproc) package/{fancontrol,luci-app-fancontrol}/compile V=s
+        make -j$(nproc) package/{fancontrol,luci-app-fancontrol,luci-i18n-fancontrol-zh_Hans}/compile V=s
 
     - name: Upload IPKs
       uses: actions/upload-artifact@v4
