@@ -39,6 +39,7 @@ jobs:
         echo "CONFIG_TARGET_mvebu_cortexa72=y"     >> .config
         echo "CONFIG_TARGET_ARCH_PACKAGES=aarch64_cortex-a72" >> .config
         echo "CONFIG_USE_APK=n"                      >> .config
+        echo "CONFIG_TOOLCHAIN_GDB_USE_PYTHON=n"     >> .config
         echo "CONFIG_PACKAGE_fancontrol=y"           >> .config
         echo "CONFIG_PACKAGE_luci-app-fancontrol=y"  >> .config
         echo "CONFIG_PACKAGE_luci-i18n-fancontrol-zh_Hans=y" >> .config
@@ -47,7 +48,7 @@ jobs:
     - name: Bootstrap toolchain & kernel
       run: |
         cd openwrt
-        make -j$(nproc) {toolchain,target}/compile V=s
+        make -j$(nproc) {toolchain,target}/compile
 
     - name: Compile fancontrol & LuCI
       run: |
