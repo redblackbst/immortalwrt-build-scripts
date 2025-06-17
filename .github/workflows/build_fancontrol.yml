@@ -47,7 +47,7 @@ jobs:
     - name: Bootstrap toolchain & kernel
       run: |
         cd openwrt
-        make -j$(nproc) {toolchain,target}/compile
+        make -j$(nproc) {toolchain,target}/compile V=s
 
     - name: Compile fancontrol & LuCI
       run: |
